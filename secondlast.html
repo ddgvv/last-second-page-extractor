@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Extract 2nd Last Pages</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>📄 Extract 2nd Last Pages</h1>
+      <input type="file" id="fileInput" multiple accept="application/pdf" />
+      <button class="btn secondary" onclick="extractSecondLast()">
+        Extract
+      </button>
+      <a class="link" href="index.html">⬅ Back</a>
+    </div>
+
+    <script>
+      async function extractSecondLast() {
+        const files = document.getElementById("fileInput").files;
+        if (!files.length) return alert("Please select PDFs");
+
+        const formData = new FormData();
+        for (let f of files) formData.append("files", f);
+
+        try {
+          const res = await fetch(
+            "https://vigneswar.pythonanywhere.com/secondlast",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (!res.ok) throw new Error("Failed");
+
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "second_last_pages.pdf";
+          a.click();
+        } catch (err) {
+          console.error(err);
+          alert("Error extracting pages");
+        }
+      }
+    </script>
+  </body>
+</html>
