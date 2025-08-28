@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Contact EasyTool.in for support, suggestions, or partnership inquiries."
+    />
+    <title>Contact Us - EasyTool.in</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <h1>📑 EasyTool.in</h1>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html" class="active">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-header">
+        <div class="container">
+          <h1>Contact Us</h1>
+          <p>We'd love to hear from you</p>
+        </div>
+      </section>
+
+      <section class="contact-content">
+        <div class="container">
+          <div class="contact-info">
+            <h2>Get In Touch</h2>
+            <p>
+              Have questions, suggestions, or need support? Reach out to us
+              using the information below or through our contact form.
+            </p>
+
+            <div class="contact-details">
+              <div class="contact-item">
+                <h3>Email</h3>
+                <p>easetool.care@gmail.com</p>
+              </div>
+              <div class="contact-item">
+                <h3>Response Time</h3>
+                <p>We typically respond within 24-48 hours</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-form">
+            <h2>Send us a Message</h2>
+            <form id="contactForm">
+              <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Your Email</label>
+                <input type="email" id="email" name="email" required />
+              </div>
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" required />
+              </div>
+              <div class="form-group">
+                <label for="message">Your Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="ad-section">
+        <div class="container">
+          <!-- AdSense placeholder -->
+          <div class="ad-container">
+            <p>Advertisement</p>
+            <!-- Ad code will go here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-contact">
+        <div class="container">
+          <h2>Common Questions</h2>
+          <div class="faq-item">
+            <h3>I'm having trouble with a tool. Can you help?</h3>
+            <p>
+              Yes! Please describe the issue you're experiencing in detail,
+              including the type of browser you're using.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Can I suggest a new tool?</h3>
+            <p>
+              Absolutely! We're always looking for new tool ideas that would
+              serve our users better.
+            </p>
+          </div>
+          <div class="faq-item">
+            <h3>Are you available for partnerships?</h3>
+            <p>
+              Yes, we're open to discussing partnership opportunities. Please
+              reach out with details.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EasyTool.in</h3>
+            <p>Free online PDF tools to make your document work easier.</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="tools.html">Tools</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="privacy.html">Privacy Policy</a></li>
+              <li><a href="terms.html">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 EasyTool.in. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          alert(
+            "Thank you for your message! In a real implementation, this would send an email to easetool.care@gmail.com"
+          );
+          this.reset();
+        });
+    </script>
+  </body>
+</html>

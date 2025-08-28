@@ -2,23 +2,103 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Extract 2nd Last Pages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Extract the second last page from multiple PDF files with EasyTool's free online PDF tool."
+    />
+    <title>Extract 2nd Last Pages - EasyTool.in</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="container">
-      <h1>📄 Extract 2nd Last Pages</h1>
-      <input type="file" id="fileInput" multiple accept="application/pdf" />
-      <button class="btn secondary" onclick="extractSecondLast()">
-        Extract
-      </button>
-      <a class="link" href="index.html">⬅ Back</a>
-    </div>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <h1>📑 EasyTool.in</h1>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="tool-container">
+          <h1>📄 Extract 2nd Last Pages</h1>
+          <p>Extract the second last page from multiple PDF files</p>
+
+          <div class="file-input-container">
+            <label for="fileInput" class="file-input-label">
+              <strong>Choose PDF files</strong>
+              <span>Select multiple PDF files to process</span>
+            </label>
+            <input
+              type="file"
+              id="fileInput"
+              multiple
+              accept="application/pdf"
+            />
+          </div>
+
+          <button
+            class="btn secondary"
+            onclick="extractSecondLast()"
+            id="extractBtn"
+          >
+            Extract Pages
+          </button>
+
+          <a class="link" href="tools.html">⬅ Back to Tools</a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EasyTool.in</h3>
+            <p>Free online PDF tools to make your document work easier.</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="tools.html">Tools</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="privacy.html">Privacy Policy</a></li>
+              <li><a href="terms.html">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 EasyTool.in. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
 
     <script>
       async function extractSecondLast() {
         const files = document.getElementById("fileInput").files;
-        if (!files.length) return alert("Please select PDFs");
+        const extractBtn = document.getElementById("extractBtn");
+
+        if (!files.length) return alert("Please select PDF files to process");
+
+        // Show loading state
+        extractBtn.innerHTML = '<span class="spinner"></span> Extracting...';
+        extractBtn.disabled = true;
 
         const formData = new FormData();
         for (let f of files) formData.append("files", f);
@@ -32,19 +112,46 @@
             }
           );
 
-          if (!res.ok) throw new Error("Failed");
+          if (!res.ok) throw new Error("Failed to extract pages");
 
           const blob = await res.blob();
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
           a.download = "second_last_pages.pdf";
+          document.body.appendChild(a);
           a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          alert(
+            "Pages extracted successfully! Your download should start shortly."
+          );
         } catch (err) {
           console.error(err);
-          alert("Error extracting pages");
+          alert("Error extracting pages. Please try again.");
+        } finally {
+          // Reset button
+          extractBtn.innerHTML = "Extract Pages";
+          extractBtn.disabled = false;
         }
       }
+
+      // Show selected file names
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (e) {
+          const label = document.querySelector(".file-input-label span");
+          if (this.files.length > 0) {
+            if (this.files.length === 1) {
+              label.textContent = this.files[0].name;
+            } else {
+              label.textContent = this.files.length + " files selected";
+            }
+          } else {
+            label.textContent = "Select multiple PDF files to process";
+          }
+        });
     </script>
   </body>
 </html>
