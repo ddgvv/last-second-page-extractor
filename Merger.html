@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Extract 2nd Last Pages & Merge</title>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  </head>
+  <body style="font-family: Arial; text-align: center; margin-top: 50px">
+    <h2>📄 Extract 2nd Last Page from Multiple PDFs & Merge</h2>
+    <input type="file" id="pdfUpload" multiple accept="application/pdf" />
+    <br /><br />
+    <button id="processBtn">Extract & Download Merged PDF</button>
+
+    <script>
+      const { PDFDocument } = PDFLib;
+
+      document
+        .getElementById("processBtn")
+        .addEventListener("click", async () => {
+          const files = document.getElementById("pdfUpload").files;
+          if (files.length === 0) {
+            alert("Please upload at least one PDF file!");
+            return;
+          }
+
+          const mergedPdf = await PDFDocument.create();
+
+          for (let file of files) {
+            if (file.type !== "application/pdf") {
+              alert(`Skipping ${file.name}: Not a PDF file`);
+              continue;
+            }
+
+            try {
+              const arrayBuffer = await file.arrayBuffer();
+              const pdfDoc = await PDFDocument.load(arrayBuffer);
+              const totalPages = pdfDoc.getPageCount();
+
+              if (totalPages < 2) {
+                alert(
+                  `${file.name} does not have enough pages (needs at least 2). Skipping.`
+                );
+                continue;
+              }
+
+              const secondLastPageIndex = totalPages - 2;
+              const [page] = await mergedPdf.copyPages(pdfDoc, [
+                secondLastPageIndex,
+              ]);
+              mergedPdf.addPage(page);
+            } catch (err) {
+              console.error(`Error reading ${file.name}:`, err);
+              alert(`❌ Failed to read ${file.name}, skipping.`);
+            }
+          }
+
+          // If no valid pages added, stop
+          if (mergedPdf.getPageCount() === 0) {
+            alert("No valid PDF pages were added. Check your files.");
+            return;
+          }
+
+          // Save & trigger download
+          const pdfBytes = await mergedPdf.save();
+          const blob = new Blob([pdfBytes], { type: "application/pdf" });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "merged_second_last_pages.pdf";
+          link.click();
+        });
+    </script>
+  </body>
+</html>
