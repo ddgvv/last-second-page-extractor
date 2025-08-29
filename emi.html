@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Calculate your Equated Monthly Installment (EMI) for loans with EasyTool's EMI calculator."
+    />
+    <title>EMI Calculator - EasyTool.in</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .emi-calculator {
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        max-width: 1000px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .calculator-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      @media (max-width: 900px) {
+        .calculator-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .input-panel {
+        background: #f9fafb;
+        padding: 25px;
+        border-radius: 10px;
+      }
+
+      .result-panel {
+        background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .calculator-header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      .calculator-header h1 {
+        margin-bottom: 10px;
+        color: #2d3748;
+      }
+
+      .calculator-header p {
+        color: #718096;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      .input-with-slider {
+        margin-bottom: 5px;
+      }
+
+      .input-with-icon {
+        position: relative;
+      }
+
+      .input-with-icon input {
+        padding-left: 35px;
+        width: 100%;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+      }
+
+      input,
+      select {
+        padding: 12px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: all 0.2s ease;
+        background: white;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+      }
+
+      .slider-container {
+        margin-top: 10px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        -webkit-appearance: none;
+        background: #e2e8f0;
+        border-radius: 3px;
+        outline: none;
+        margin: 10px 0;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #4299e1;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .slider-values {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #718096;
+      }
+
+      .summary-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .summary-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .summary-card h4 {
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .summary-card .value {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+
+      .outstanding-alert {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        border-left: 4px solid #48bb78;
+      }
+
+      .outstanding-alert h4 {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 25px 0 15px;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        opacity: 0.7;
+        transition: all 0.2s ease;
+      }
+
+      .tab.active {
+        opacity: 1;
+        border-bottom-color: white;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .amortization-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 0.85rem;
+      }
+
+      .amortization-table th,
+      .amortization-table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .amortization-table th {
+        background: rgba(255, 255, 255, 0.05);
+        font-weight: 600;
+      }
+
+      .amortization-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .year-summary {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        font-weight: bold;
+      }
+
+      .download-btn {
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .download-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .input-hint {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 5px;
+      }
+
+      .emi-breakdown {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .breakdown-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .breakdown-item .label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+        margin-bottom: 5px;
+      }
+
+      .breakdown-item .amount {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .chart-container {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow: hidden;
+      }
+
+      .chart-fill {
+        height: 100%;
+        background: #48bb78;
+        border-radius: 5px;
+        transition: width 0.5s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <h1>📑 EasyTool.in</h1>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="emi-calculator">
+          <div class="calculator-header">
+            <h1>🧮 EMI Calculator</h1>
+            <p>
+              Calculate your Equated Monthly Installment for home, car, or
+              personal loans
+            </p>
+          </div>
+
+          <div class="calculator-container">
+            <div class="input-panel">
+              <div class="form-group">
+                <label for="loanAmount">Loan Amount</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">₹</span>
+                  <input
+                    type="number"
+                    id="loanAmount"
+                    placeholder="Loan amount"
+                    min="1000"
+                    max="100000000"
+                    value="1000000"
+                  />
+                </div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="loanAmountSlider"
+                    min="1000"
+                    max="10000000"
+                    step="1000"
+                    value="1000000"
+                  />
+                  <div class="slider-values">
+                    <span>1K</span>
+                    <span>50L</span>
+                    <span>1Cr</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="interestRate">Interest Rate (% per annum)</label>
+                <div class="input-with-icon">
+                  <input
+                    type="number"
+                    id="interestRate"
+                    placeholder="Interest rate"
+                    min="0"
+                    max="30"
+                    step="0.01"
+                    value="8.5"
+                  />
+                  <span class="input-icon">%</span>
+                </div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="interestRateSlider"
+                    min="0"
+                    max="30"
+                    step="0.1"
+                    value="8.5"
+                  />
+                  <div class="slider-values">
+                    <span>0%</span>
+                    <span>15%</span>
+                    <span>30%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="loanTenure">Loan Tenure</label>
+                <div class="input-with-icon">
+                  <input
+                    type="number"
+                    id="loanTenure"
+                    placeholder="Loan tenure"
+                    min="1"
+                    max="30"
+                    value="20"
+                  />
+                  <span class="input-icon">📅</span>
+                </div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="loanTenureSlider"
+                    min="1"
+                    max="30"
+                    value="20"
+                  />
+                  <div class="slider-values">
+                    <span>1 Year</span>
+                    <span>15 Years</span>
+                    <span>30 Years</span>
+                  </div>
+                </div>
+                <select id="tenureType">
+                  <option value="years">Years</option>
+                  <option value="months">Months</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="startMonth">Loan Start Month</label>
+                <input type="month" id="startMonth" />
+                <div class="input-hint">
+                  Select when your loan repayment began
+                </div>
+              </div>
+
+              <button class="btn primary" onclick="calculateEMI()">
+                Calculate EMI
+              </button>
+            </div>
+
+            <div class="result-panel" id="resultsContainer">
+              <div class="summary-cards">
+                <div class="summary-card">
+                  <h4>Monthly EMI</h4>
+                  <div class="value" id="monthlyEmi">₹8,611</div>
+                </div>
+
+                <div class="emi-breakdown">
+                  <div class="breakdown-item">
+                    <div class="label">Total Interest</div>
+                    <div class="amount" id="totalInterest">₹10,66,536</div>
+                  </div>
+                  <div class="breakdown-item">
+                    <div class="label">Total Payment</div>
+                    <div class="amount" id="totalPayment">₹20,66,536</div>
+                  </div>
+                </div>
+
+                <div class="chart-container">
+                  <div
+                    class="chart-fill"
+                    id="principalChart"
+                    style="width: 48%"
+                  ></div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 0.8rem;
+                  "
+                >
+                  <span>Principal: ₹10,00,000</span>
+                  <span>Interest: ₹10,66,536</span>
+                </div>
+              </div>
+
+              <div
+                id="outstandingAlert"
+                class="outstanding-alert"
+                style="display: none"
+              >
+                <h4>📊 Current Outstanding</h4>
+                <div id="outstandingAmount">
+                  Your current loan outstanding is ₹8,45,230
+                </div>
+                <div
+                  id="monthsCompleted"
+                  style="margin-top: 8px; font-size: 0.9rem; opacity: 0.9"
+                >
+                  18 months completed of 240 months
+                </div>
+              </div>
+
+              <div class="tabs">
+                <div class="tab active" data-tab="yearly">Yearly Schedule</div>
+                <div class="tab" data-tab="monthly">Monthly Schedule</div>
+              </div>
+
+              <div class="tab-content active" id="yearlyTab">
+                <div
+                  style="overflow-x: auto; max-height: 200px; overflow-y: auto"
+                >
+                  <table class="amortization-table" id="yearlyTable">
+                    <thead>
+                      <tr>
+                        <th>Year</th>
+                        <th>Principal</th>
+                        <th>Interest</th>
+                        <th>Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Yearly table will be generated here -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <button class="btn download-btn" onclick="downloadSchedule()">
+                Download Schedule as CSV
+              </button>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 30px">
+            <a class="link" href="tools.html">⬅ Back to Tools</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EasyTool.in</h3>
+            <p>Free online PDF tools to make your document work easier.</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="tools.html">Tools</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="privacy.html">Privacy Policy</a></li>
+              <li><a href="terms.html">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 EasyTool.in. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Set default start month to current month
+      document.getElementById("startMonth").value = new Date()
+        .toISOString()
+        .slice(0, 7);
+
+      // Link sliders with input fields
+      document
+        .getElementById("loanAmountSlider")
+        .addEventListener("input", function () {
+          document.getElementById("loanAmount").value = this.value;
+          calculateEMI();
+        });
+
+      document
+        .getElementById("loanAmount")
+        .addEventListener("input", function () {
+          document.getElementById("loanAmountSlider").value = this.value;
+          calculateEMI();
+        });
+
+      document
+        .getElementById("interestRateSlider")
+        .addEventListener("input", function () {
+          document.getElementById("interestRate").value = this.value;
+          calculateEMI();
+        });
+
+      document
+        .getElementById("interestRate")
+        .addEventListener("input", function () {
+          document.getElementById("interestRateSlider").value = this.value;
+          calculateEMI();
+        });
+
+      document
+        .getElementById("loanTenureSlider")
+        .addEventListener("input", function () {
+          document.getElementById("loanTenure").value = this.value;
+          calculateEMI();
+        });
+
+      document
+        .getElementById("loanTenure")
+        .addEventListener("input", function () {
+          document.getElementById("loanTenureSlider").value = this.value;
+          calculateEMI();
+        });
+
+      // Tab functionality
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", function () {
+          document
+            .querySelectorAll(".tab")
+            .forEach((t) => t.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-content")
+            .forEach((c) => c.classList.remove("active"));
+
+          this.classList.add("active");
+          document
+            .getElementById(this.dataset.tab + "Tab")
+            .classList.add("active");
+        });
+      });
+
+      function calculateEMI() {
+        // Get input values
+        const loanAmount = parseFloat(
+          document.getElementById("loanAmount").value
+        );
+        const interestRate = parseFloat(
+          document.getElementById("interestRate").value
+        );
+        let loanTenure = parseFloat(
+          document.getElementById("loanTenure").value
+        );
+        const tenureType = document.getElementById("tenureType").value;
+        const startMonth = document.getElementById("startMonth").value;
+
+        // Validate inputs
+        if (!loanAmount || !interestRate || !loanTenure) {
+          return;
+        }
+
+        // Convert tenure to months if in years
+        const totalMonths =
+          tenureType === "years" ? loanTenure * 12 : loanTenure;
+
+        // Calculate monthly interest rate
+        const monthlyInterestRate = interestRate / 12 / 100;
+
+        // Calculate EMI using formula: P × r × (1 + r)^n / ((1 + r)^n - 1)
+        const emi =
+          (loanAmount *
+            monthlyInterestRate *
+            Math.pow(1 + monthlyInterestRate, totalMonths)) /
+          (Math.pow(1 + monthlyInterestRate, totalMonths) - 1);
+
+        // Calculate total payment and interest
+        const totalPayment = emi * totalMonths;
+        const totalInterest = totalPayment - loanAmount;
+
+        // Format numbers with Indian comma system
+        const formatCurrency = (amount) => {
+          return "₹" + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        };
+
+        // Display results
+        document.getElementById("monthlyEmi").textContent = formatCurrency(emi);
+        document.getElementById("totalInterest").textContent =
+          formatCurrency(totalInterest);
+        document.getElementById("totalPayment").textContent =
+          formatCurrency(totalPayment);
+
+        // Update chart
+        const principalPercent = (loanAmount / totalPayment) * 100;
+        document.getElementById("principalChart").style.width =
+          principalPercent + "%";
+
+        // Show results container
+        document.getElementById("resultsContainer").style.display = "flex";
+
+        // Calculate and display outstanding amount if start month is in the past
+        calculateOutstanding(
+          loanAmount,
+          interestRate,
+          totalMonths,
+          emi,
+          startMonth
+        );
+
+        // Generate amortization table
+        generateAmortizationTable(loanAmount, interestRate, totalMonths, emi);
+      }
+
+      function calculateOutstanding(
+        principal,
+        interestRate,
+        totalMonths,
+        emi,
+        startMonth
+      ) {
+        const startDate = new Date(startMonth + "-01");
+        const currentDate = new Date();
+        const alertElement = document.getElementById("outstandingAlert");
+
+        // Check if loan has started
+        if (startDate > currentDate) {
+          alertElement.style.display = "none";
+          return;
+        }
+
+        // Calculate months passed
+        const monthsPassed = Math.floor(
+          (currentDate - startDate) / (1000 * 60 * 60 * 24 * 30.44)
+        );
+
+        if (monthsPassed <= 0) {
+          alertElement.style.display = "none";
+          return;
+        }
+
+        // Calculate outstanding principal
+        let balance = principal;
+        const monthlyRate = interestRate / 12 / 100;
+
+        for (let month = 1; month <= monthsPassed; month++) {
+          const interestAmount = balance * monthlyRate;
+          const principalAmount = emi - interestAmount;
+          balance -= principalAmount;
+
+          if (balance <= 0) {
+            balance = 0;
+            break;
+          }
+        }
+
+        // Format numbers with Indian comma system
+        const formatCurrency = (amount) => {
+          return "₹" + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        };
+
+        // Update outstanding info
+        document.getElementById(
+          "outstandingAmount"
+        ).textContent = `Your current loan outstanding is ${formatCurrency(
+          balance
+        )}`;
+        document.getElementById(
+          "monthsCompleted"
+        ).textContent = `${monthsPassed} months completed of ${totalMonths} months`;
+
+        // Show the alert
+        alertElement.style.display = "block";
+      }
+
+      function generateAmortizationTable(
+        principal,
+        interestRate,
+        totalMonths,
+        emi
+      ) {
+        const tableBody = document.querySelector("#yearlyTable tbody");
+        tableBody.innerHTML = "";
+
+        let balance = principal;
+        const monthlyRate = interestRate / 12 / 100;
+
+        for (let year = 1; year <= Math.ceil(totalMonths / 12); year++) {
+          let yearPrincipal = 0;
+          let yearInterest = 0;
+
+          const monthsInYear = Math.min(12, totalMonths - (year - 1) * 12);
+
+          for (let month = 1; month <= monthsInYear; month++) {
+            const interestAmount = balance * monthlyRate;
+            const principalAmount = emi - interestAmount;
+
+            yearPrincipal += principalAmount;
+            yearInterest += interestAmount;
+            balance -= principalAmount;
+          }
+
+          const formatCurrency = (amount) => {
+            return (
+              "₹" + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            );
+          };
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${year}</td>
+            <td>${formatCurrency(yearPrincipal)}</td>
+            <td>${formatCurrency(yearInterest)}</td>
+            <td>${balance > 0 ? formatCurrency(balance) : "0"}</td>
+          `;
+
+          tableBody.appendChild(row);
+        }
+      }
+
+      function downloadSchedule() {
+        // Create CSV content
+        let csvContent = "Year,Principal,Interest,Balance\n";
+
+        // Add yearly data
+        document.querySelectorAll("#yearlyTable tbody tr").forEach((row) => {
+          const cells = row.querySelectorAll("td");
+          if (cells.length === 4) {
+            csvContent += `${cells[0].textContent},${cells[1].textContent
+              .replace("₹", "")
+              .replace(/,/g, "")},${cells[2].textContent
+              .replace("₹", "")
+              .replace(/,/g, "")},${cells[3].textContent
+              .replace("₹", "")
+              .replace(/,/g, "")}\n`;
+          }
+        });
+
+        // Create download link
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "emi_schedule.csv");
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // Calculate on page load and input changes
+      window.onload = calculateEMI;
+      document
+        .getElementById("tenureType")
+        .addEventListener("change", calculateEMI);
+      document
+        .getElementById("startMonth")
+        .addEventListener("change", calculateEMI);
+    </script>
+  </body>
+</html>

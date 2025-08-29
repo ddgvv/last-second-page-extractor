@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Unlock password-protected PDF files with EasyTool's free online PDF unlocker tool."
+    />
+    <title>PDF Unlocker - EasyTool.in</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .password-required {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: block;
+      }
+
+      .tool-tip {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #007bff;
+      }
+
+      .tool-tip h4 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .tool-tip ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+      }
+
+      .tool-tip li {
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="logo">
+          <h1>📑 EasyTool.in</h1>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="tool-container">
+          <h1>🔓 PDF Unlocker</h1>
+          <p>Remove password protection from your PDF files</p>
+
+          <div class="file-input-container">
+            <label for="fileInput" class="file-input-label">
+              <strong>Choose a password-protected PDF file</strong>
+              <span>Select a PDF file to unlock</span>
+            </label>
+            <input type="file" id="fileInput" accept="application/pdf" />
+          </div>
+
+          <div class="form-group">
+            <label for="password"
+              >PDF Password
+              <span class="password-required">*Required</span></label
+            >
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter PDF password"
+              required
+            />
+          </div>
+
+          <button class="btn primary" onclick="unlockPdf()" id="unlockBtn">
+            Unlock PDF
+          </button>
+
+          <div class="tool-tip">
+            <h4>How to use this tool:</h4>
+            <ul>
+              <li>Select a password-protected PDF file</li>
+              <li>Enter the correct password for the PDF</li>
+              <li>Click "Unlock PDF" to remove the password protection</li>
+              <li>Download the unlocked PDF file</li>
+            </ul>
+          </div>
+
+          <div class="disclaimer">
+            <p>
+              <strong>Note:</strong> This tool requires the correct password to
+              unlock PDF files. It cannot break strong encryption or recover
+              lost passwords.
+            </p>
+          </div>
+
+          <a class="link" href="tools.html">⬅ Back to Tools</a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>EasyTool.in</h3>
+            <p>Free online PDF tools to make your document work easier.</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="tools.html">Tools</a></li>
+              <li><a href="about.html">About</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="privacy.html">Privacy Policy</a></li>
+              <li><a href="terms.html">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 EasyTool.in. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      async function unlockPdf() {
+        const fileInput = document.getElementById("fileInput");
+        const passwordInput = document.getElementById("password");
+        const unlockBtn = document.getElementById("unlockBtn");
+
+        if (!fileInput.files.length) {
+          return alert("Please select a PDF file to unlock");
+        }
+
+        if (!passwordInput.value) {
+          return alert("Please enter the PDF password");
+        }
+
+        // Show loading state
+        unlockBtn.innerHTML = '<span class="spinner"></span> Processing...';
+        unlockBtn.disabled = true;
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("password", passwordInput.value);
+
+        try {
+          // This would connect to your Python backend
+          const res = await fetch(
+            "https://vigneswar.pythonanywhere.com/unlock",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || "Failed to unlock PDF");
+          }
+
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "unlocked.pdf";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          alert(
+            "PDF unlocked successfully! Your download should start shortly."
+          );
+        } catch (err) {
+          console.error(err);
+          alert("Error: " + err.message);
+        } finally {
+          // Reset button
+          unlockBtn.innerHTML = "Unlock PDF";
+          unlockBtn.disabled = false;
+        }
+      }
+
+      // Show selected file name
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (e) {
+          const label = document.querySelector(".file-input-label span");
+          if (this.files.length > 0) {
+            label.textContent = this.files[0].name;
+          } else {
+            label.textContent = "Select a PDF file to unlock";
+          }
+        });
+    </script>
+  </body>
+</html>
