@@ -1,7 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1010560134325672"
+      crossorigin="anonymous"
+    ></script>
     <meta charset="UTF-8" />
+    <meta name="google-adsense-account" content="ca-pub-1010560134325672" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
@@ -624,13 +630,13 @@
       function calculateEMI() {
         // Get input values
         const loanAmount = parseFloat(
-          document.getElementById("loanAmount").value
+          document.getElementById("loanAmount").value,
         );
         const interestRate = parseFloat(
-          document.getElementById("interestRate").value
+          document.getElementById("interestRate").value,
         );
         let loanTenure = parseFloat(
-          document.getElementById("loanTenure").value
+          document.getElementById("loanTenure").value,
         );
         const tenureType = document.getElementById("tenureType").value;
         const startMonth = document.getElementById("startMonth").value;
@@ -684,7 +690,7 @@
           interestRate,
           totalMonths,
           emi,
-          startMonth
+          startMonth,
         );
 
         // Generate amortization table
@@ -696,7 +702,7 @@
         interestRate,
         totalMonths,
         emi,
-        startMonth
+        startMonth,
       ) {
         const startDate = new Date(startMonth + "-01");
         const currentDate = new Date();
@@ -710,7 +716,7 @@
 
         // Calculate months passed
         const monthsPassed = Math.floor(
-          (currentDate - startDate) / (1000 * 60 * 60 * 24 * 30.44)
+          (currentDate - startDate) / (1000 * 60 * 60 * 24 * 30.44),
         );
 
         if (monthsPassed <= 0) {
@@ -739,14 +745,10 @@
         };
 
         // Update outstanding info
-        document.getElementById(
-          "outstandingAmount"
-        ).textContent = `Your current loan outstanding is ${formatCurrency(
-          balance
-        )}`;
-        document.getElementById(
-          "monthsCompleted"
-        ).textContent = `${monthsPassed} months completed of ${totalMonths} months`;
+        document.getElementById("outstandingAmount").textContent =
+          `Your current loan outstanding is ${formatCurrency(balance)}`;
+        document.getElementById("monthsCompleted").textContent =
+          `${monthsPassed} months completed of ${totalMonths} months`;
 
         // Show the alert
         alertElement.style.display = "block";
@@ -756,7 +758,7 @@
         principal,
         interestRate,
         totalMonths,
-        emi
+        emi,
       ) {
         const tableBody = document.querySelector("#yearlyTable tbody");
         tableBody.innerHTML = "";
