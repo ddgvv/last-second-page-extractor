@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debt Freedom Planner | 1% CC Rule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+      }
+      .card-gradient {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 p-4 md:p-8 text-slate-800 font-sans">
+    <div
+      id="report-content"
+      class="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-slate-200"
+    >
+      <div
+        class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6"
+      >
+        <div>
+          <h1 class="text-3xl font-black text-slate-900 tracking-tight">
+            Debt Freedom Planner
+          </h1>
+          <p class="text-slate-500 font-medium">
+            Strategic Repayment & 1% CC Minimum Logic
+          </p>
+        </div>
+        <div class="flex gap-3 no-print">
+          <button
+            onclick="downloadPDF()"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-200"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+            Download PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="p-8 grid grid-cols-1 md:grid-cols-4 gap-6 bg-slate-50/50">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <p
+            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+          >
+            Total Outstanding
+          </p>
+          <h2 id="total-outstanding" class="text-2xl font-black text-slate-900">
+            ₹0
+          </h2>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <p
+            class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1"
+          >
+            Monthly Outflow
+          </p>
+          <h2 id="total-outflow" class="text-2xl font-black text-slate-900">
+            ₹0
+          </h2>
+          <p class="text-[9px] text-slate-400 mt-1">EMI + 1% CC Min</p>
+        </div>
+        <div class="bg-blue-600 p-6 rounded-2xl shadow-lg text-white">
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80"
+          >
+            Standard Freedom
+          </p>
+          <h2 id="std-close" class="text-2xl font-black">-</h2>
+        </div>
+        <div class="bg-emerald-500 p-6 rounded-2xl shadow-lg text-white">
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80"
+          >
+            Accelerated Freedom
+          </p>
+          <h2 id="acc-close" class="text-2xl font-black">-</h2>
+        </div>
+      </div>
+
+      <div class="p-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div class="lg:col-span-4 no-print">
+          <div
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm sticky top-8"
+          >
+            <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+              <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+              Add New Debt
+            </h3>
+
+            <div class="flex p-1.5 bg-slate-100 rounded-xl mb-6">
+              <button
+                onclick="setTab('loan')"
+                id="tab-loan"
+                class="flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all"
+              >
+                FIXED LOAN
+              </button>
+              <button
+                onclick="setTab('cc')"
+                id="tab-cc"
+                class="flex-1 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-all"
+              >
+                CREDIT CARD
+              </button>
+            </div>
+
+            <form id="debt-form" class="space-y-4">
+              <input type="hidden" id="debt-type" value="loan" />
+
+              <div>
+                <label
+                  class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                  >Debt Name</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="e.g. ICICI Personal Loan"
+                  class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition"
+                  required
+                />
+              </div>
+
+              <div id="loan-fields" class="space-y-4">
+                <div>
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                    >Original Principal (₹)</label
+                  >
+                  <input
+                    type="number"
+                    id="principal"
+                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                      >ROI (Annual %)</label
+                    >
+                    <input
+                      type="number"
+                      id="roi"
+                      step="0.01"
+                      class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                      >Tenure (Months)</label
+                    >
+                    <input
+                      type="number"
+                      id="tenure"
+                      class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                    >Start Date</label
+                  >
+                  <input
+                    type="date"
+                    id="start-date"
+                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  />
+                </div>
+              </div>
+
+              <div id="cc-fields" class="hidden space-y-4">
+                <div>
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                    >Current Balance (₹)</label
+                  >
+                  <input
+                    type="number"
+                    id="cc-balance"
+                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
+                    >Interest Rate (Annual %)</label
+                  >
+                  <input
+                    type="number"
+                    id="cc-roi"
+                    value="42"
+                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-[0.98]"
+              >
+                Add to Portfolio
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8 space-y-8">
+          <div
+            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"
+          >
+            <h3 class="text-lg font-bold mb-6 text-slate-800">
+              Balance Depletion Projection
+            </h3>
+            <div class="h-72">
+              <canvas id="projectionChart"></canvas>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+          >
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-slate-50/80 border-b border-slate-100">
+                <tr>
+                  <th
+                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                  >
+                    Type & Name
+                  </th>
+                  <th
+                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right"
+                  >
+                    Outstanding
+                  </th>
+                  <th
+                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right"
+                  >
+                    Min. Outflow
+                  </th>
+                  <th
+                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center no-print"
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="debt-list" class="divide-y divide-slate-50"></tbody>
+            </table>
+          </div>
+
+          <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100">
+            <h4 class="text-amber-800 font-bold mb-2 flex items-center gap-2">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              Financial Insight
+            </h4>
+            <p class="text-sm text-amber-700 leading-relaxed">
+              The <strong>Accelerated Date</strong> assumes you keep your total
+              monthly budget constant. Even after a loan is closed, that
+              specific EMI amount is redirected to pay off your credit card
+              principal faster, rather than being spent.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let debts = JSON.parse(localStorage.getItem("ultimate_debt_data")) || [];
+      let chart = null;
+
+      function setTab(type) {
+        const isLoan = type === "loan";
+        document.getElementById("debt-type").value = type;
+        document
+          .getElementById("loan-fields")
+          .classList.toggle("hidden", !isLoan);
+        document.getElementById("cc-fields").classList.toggle("hidden", isLoan);
+
+        document.getElementById("tab-loan").className = isLoan
+          ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all"
+          : "flex-1 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-all";
+        document.getElementById("tab-cc").className = !isLoan
+          ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all"
+          : "flex-1 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-all";
+      }
+
+      function calculateLoanOutstanding(
+        P,
+        annualROI,
+        totalMonths,
+        startDateStr,
+      ) {
+        const r = annualROI / 100 / 12;
+        const start = new Date(startDateStr);
+        const today = new Date();
+        let p =
+          (today.getFullYear() - start.getFullYear()) * 12 +
+          (today.getMonth() - start.getMonth());
+        if (today.getDate() < start.getDate()) p--;
+        if (p <= 0) return P;
+        if (p >= totalMonths) return 0;
+        return (
+          (P * (Math.pow(1 + r, totalMonths) - Math.pow(1 + r, p))) /
+          (Math.pow(1 + r, totalMonths) - 1)
+        );
+      }
+
+      function calculateEMI(P, annualROI, n) {
+        const r = annualROI / 100 / 12;
+        return (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      }
+
+      function runProjection(totalMonthlyBudget) {
+        let activeDebts = debts
+          .map((d) => {
+            let bal =
+              d.type === "loan"
+                ? calculateLoanOutstanding(
+                    d.principal,
+                    d.roi,
+                    d.tenure,
+                    d.startDate,
+                  )
+                : parseFloat(d.balance);
+            return { ...d, currentBalance: bal, monthlyRate: d.roi / 100 / 12 };
+          })
+          .filter((d) => d.currentBalance > 0);
+
+        activeDebts.sort((a, b) => b.roi - a.roi); // Avalanche Sort
+
+        let months = 0;
+        let history = [
+          activeDebts.reduce((sum, d) => sum + d.currentBalance, 0),
+        ];
+
+        while (
+          activeDebts.reduce((sum, d) => sum + d.currentBalance, 0) > 0 &&
+          months < 360
+        ) {
+          let remainingBudget = totalMonthlyBudget;
+
+          // 1. Accrue Interest
+          activeDebts.forEach(
+            (d) => (d.currentBalance += d.currentBalance * d.monthlyRate),
+          );
+
+          // 2. Pay Minimums First (1% for CC, Full EMI for Loan)
+          activeDebts.forEach((d) => {
+            let minPayment =
+              d.type === "loan"
+                ? calculateEMI(d.principal, d.roi, d.tenure)
+                : d.currentBalance * 0.01;
+            let actualPayment = Math.min(
+              d.currentBalance,
+              minPayment,
+              remainingBudget,
+            );
+            d.currentBalance -= actualPayment;
+            remainingBudget -= actualPayment;
+          });
+
+          // 3. Apply Extra Budget to highest ROI
+          if (remainingBudget > 0 && activeDebts.length > 0) {
+            activeDebts[0].currentBalance -= Math.min(
+              activeDebts[0].currentBalance,
+              remainingBudget,
+            );
+          }
+
+          months++;
+          history.push(
+            activeDebts.reduce((sum, d) => sum + d.currentBalance, 0),
+          );
+          activeDebts = activeDebts.filter((d) => d.currentBalance > 0.01);
+        }
+        return { months, history };
+      }
+
+      function updateUI() {
+        const list = document.getElementById("debt-list");
+        list.innerHTML = "";
+        let totals = { outstanding: 0, monthly: 0 };
+        let maxStdMonths = 0;
+
+        debts.forEach((d, i) => {
+          let bal, monthly;
+          if (d.type === "loan") {
+            bal = calculateLoanOutstanding(
+              d.principal,
+              d.roi,
+              d.tenure,
+              d.startDate,
+            );
+            monthly = calculateEMI(d.principal, d.roi, d.tenure);
+            let start = new Date(d.startDate);
+            let passed =
+              (new Date().getFullYear() - start.getFullYear()) * 12 +
+              (new Date().getMonth() - start.getMonth());
+            maxStdMonths = Math.max(maxStdMonths, d.tenure - passed);
+          } else {
+            bal = parseFloat(d.balance);
+            monthly = bal * 0.01; // 1% Rule
+          }
+
+          totals.outstanding += bal;
+          totals.monthly += monthly;
+
+          list.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-5">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded ${d.type === "loan" ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"}">${d.type.toUpperCase()}</span>
+                            <div class="font-bold text-slate-800 mt-1">${d.name}</div>
+                        </td>
+                        <td class="p-5 text-right font-black text-slate-900">₹${Math.round(bal).toLocaleString("en-IN")}</td>
+                        <td class="p-5 text-right font-medium text-slate-500">₹${Math.round(monthly).toLocaleString("en-IN")}</td>
+                        <td class="p-5 text-center no-print">
+                            <button onclick="remove(${i})" class="text-slate-300 hover:text-red-500 transition">Remove</button>
+                        </td>
+                    </tr>`;
+        });
+
+        const projection = runProjection(totals.monthly);
+        const today = new Date();
+
+        document.getElementById("total-outstanding").innerText =
+          "₹" + Math.round(totals.outstanding).toLocaleString("en-IN");
+        document.getElementById("total-outflow").innerText =
+          "₹" + Math.round(totals.monthly).toLocaleString("en-IN");
+
+        const stdDate = new Date(
+          today.getFullYear(),
+          today.getMonth() + maxStdMonths,
+        );
+        const accDate = new Date(
+          today.getFullYear(),
+          today.getMonth() + projection.months,
+        );
+
+        document.getElementById("std-close").innerText = debts.length
+          ? stdDate.toLocaleDateString("en-IN", {
+              month: "short",
+              year: "numeric",
+            })
+          : "-";
+        document.getElementById("acc-close").innerText = debts.length
+          ? accDate.toLocaleDateString("en-IN", {
+              month: "short",
+              year: "numeric",
+            })
+          : "-";
+
+        renderChart(projection.history);
+        localStorage.setItem("ultimate_debt_data", JSON.stringify(debts));
+      }
+
+      function renderChart(history) {
+        const ctx = document.getElementById("projectionChart").getContext("2d");
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: history.map((_, i) => `Month ${i}`),
+            datasets: [
+              {
+                data: history,
+                borderColor: "#10b981",
+                backgroundColor: (context) => {
+                  const chart = context.chart;
+                  const { ctx, chartArea } = chart;
+                  if (!chartArea) return null;
+                  const gradient = ctx.createLinearGradient(
+                    0,
+                    chartArea.top,
+                    0,
+                    chartArea.bottom,
+                  );
+                  gradient.addColorStop(0, "rgba(16, 185, 129, 0.2)");
+                  gradient.addColorStop(1, "rgba(16, 185, 129, 0)");
+                  return gradient;
+                },
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: "#f1f5f9" } },
+              x: { grid: { display: false } },
+            },
+          },
+        });
+      }
+
+      async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const element = document.getElementById("report-content");
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL("image/png");
+        const doc = new jsPDF("p", "mm", "a4");
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        doc.save("Personal-Debt-Analysis.pdf");
+      }
+
+      document.getElementById("debt-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const type = document.getElementById("debt-type").value;
+        const entry = { type, name: document.getElementById("name").value };
+        if (type === "loan") {
+          entry.principal = parseFloat(
+            document.getElementById("principal").value,
+          );
+          entry.roi = parseFloat(document.getElementById("roi").value);
+          entry.tenure = parseInt(document.getElementById("tenure").value);
+          entry.startDate = document.getElementById("start-date").value;
+        } else {
+          entry.balance = parseFloat(
+            document.getElementById("cc-balance").value,
+          );
+          entry.roi = parseFloat(document.getElementById("cc-roi").value);
+        }
+        debts.push(entry);
+        updateUI();
+        e.target.reset();
+      });
+
+      window.remove = (i) => {
+        debts.splice(i, 1);
+        updateUI();
+      };
+      updateUI();
+    </script>
+  </body>
+</html>
