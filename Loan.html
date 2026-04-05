@@ -3,45 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Debt Freedom Planner | 1% CC Rule</title>
+    <title>Debt Freedom Planner Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap");
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
       @media print {
         .no-print {
           display: none !important;
         }
       }
-      .card-gradient {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      }
     </style>
   </head>
-  <body class="bg-slate-100 p-4 md:p-8 text-slate-800 font-sans">
-    <div
-      id="report-content"
-      class="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-slate-200"
-    >
-      <div
-        class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6"
+  <body class="bg-slate-50 p-4 md:p-8 text-slate-900">
+    <div id="report-content" class="max-w-6xl mx-auto">
+      <header
+        class="mb-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm"
       >
         <div>
-          <h1 class="text-3xl font-black text-slate-900 tracking-tight">
-            Debt Freedom Planner
+          <h1 class="text-2xl font-800 tracking-tight text-slate-900">
+            Debt Freedom Planner <span class="text-blue-600">Pro</span>
           </h1>
-          <p class="text-slate-500 font-medium">
-            Strategic Repayment & 1% CC Minimum Logic
+          <p class="text-slate-500 text-sm">
+            Strategic Repayment & Yearly Prepayment Engine
           </p>
         </div>
         <div class="flex gap-3 no-print">
           <button
             onclick="downloadPDF()"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-200"
+            class="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-slate-800 transition flex items-center gap-2 shadow-lg"
           >
             <svg
-              class="w-5 h-5"
+              class="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -50,76 +48,109 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
               ></path>
             </svg>
-            Download PDF
+            Export Report
           </button>
         </div>
-      </div>
+      </header>
 
-      <div class="p-8 grid grid-cols-1 md:grid-cols-4 gap-6 bg-slate-50/50">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
           <p
             class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
           >
             Total Outstanding
           </p>
-          <h2 id="total-outstanding" class="text-2xl font-black text-slate-900">
+          <h2 id="total-outstanding" class="text-3xl font-800 text-slate-900">
             ₹0
           </h2>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
           <p
             class="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1"
           >
-            Monthly Outflow
+            Current Monthly Outflow
           </p>
-          <h2 id="total-outflow" class="text-2xl font-black text-slate-900">
+          <h2 id="total-outflow" class="text-3xl font-800 text-slate-900">
             ₹0
           </h2>
-          <p class="text-[9px] text-slate-400 mt-1">EMI + 1% CC Min</p>
+          <p class="text-[10px] text-slate-400 mt-1">EMI + 1% CC Minimum</p>
         </div>
-        <div class="bg-blue-600 p-6 rounded-2xl shadow-lg text-white">
+        <div
+          class="bg-indigo-600 p-6 rounded-3xl shadow-xl shadow-indigo-100 text-white"
+        >
           <p
             class="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80"
           >
             Standard Freedom
           </p>
-          <h2 id="std-close" class="text-2xl font-black">-</h2>
+          <h2 id="std-close" class="text-3xl font-800">-</h2>
         </div>
-        <div class="bg-emerald-500 p-6 rounded-2xl shadow-lg text-white">
+        <div
+          class="bg-emerald-500 p-6 rounded-3xl shadow-xl shadow-emerald-100 text-white"
+        >
           <p
             class="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80"
           >
             Accelerated Freedom
           </p>
-          <h2 id="acc-close" class="text-2xl font-black">-</h2>
+          <h2 id="acc-close" class="text-3xl font-800">-</h2>
         </div>
       </div>
 
-      <div class="p-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
-        <div class="lg:col-span-4 no-print">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-4 space-y-6 no-print">
           <div
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm sticky top-8"
+            class="bg-blue-50 p-6 rounded-3xl border border-blue-100 shadow-sm"
           >
-            <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-              <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
-              Add New Debt
+            <h3
+              class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                ></path>
+              </svg>
+              Yearly Extra Payment
             </h3>
+            <input
+              type="number"
+              id="yearly-prepay"
+              oninput="updateUI()"
+              placeholder="e.g. 100000"
+              class="w-full p-3 bg-white border border-blue-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-blue-900"
+            />
+            <p class="text-[10px] text-blue-700 mt-2">
+              Enter an amount you'll pay <strong>once a year</strong> (Bonus,
+              etc.)
+            </p>
+          </div>
 
-            <div class="flex p-1.5 bg-slate-100 rounded-xl mb-6">
+          <div
+            class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm"
+          >
+            <div class="flex p-1 bg-slate-100 rounded-xl mb-6">
               <button
                 onclick="setTab('loan')"
                 id="tab-loan"
-                class="flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all"
+                class="flex-1 py-2 text-[10px] font-bold rounded-lg bg-white shadow-sm"
               >
-                FIXED LOAN
+                EMI LOAN
               </button>
               <button
                 onclick="setTab('cc')"
                 id="tab-cc"
-                class="flex-1 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-all"
+                class="flex-1 py-2 text-[10px] font-bold text-slate-500"
               >
                 CREDIT CARD
               </button>
@@ -127,100 +158,62 @@
 
             <form id="debt-form" class="space-y-4">
               <input type="hidden" id="debt-type" value="loan" />
+              <input
+                type="text"
+                id="name"
+                placeholder="Debt Name"
+                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                required
+              />
 
-              <div>
-                <label
-                  class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                  >Debt Name</label
-                >
+              <div id="loan-fields" class="space-y-4">
                 <input
-                  type="text"
-                  id="name"
-                  placeholder="e.g. ICICI Personal Loan"
-                  class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition"
-                  required
+                  type="number"
+                  id="principal"
+                  placeholder="Principal Amount (₹)"
+                  class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                />
+                <div class="grid grid-cols-2 gap-3">
+                  <input
+                    type="number"
+                    id="roi"
+                    step="0.01"
+                    placeholder="ROI %"
+                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  />
+                  <input
+                    type="number"
+                    id="tenure"
+                    placeholder="Tenure (M)"
+                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                  />
+                </div>
+                <input
+                  type="date"
+                  id="start-date"
+                  class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
                 />
               </div>
 
-              <div id="loan-fields" class="space-y-4">
-                <div>
-                  <label
-                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                    >Original Principal (₹)</label
-                  >
-                  <input
-                    type="number"
-                    id="principal"
-                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                  />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                      >ROI (Annual %)</label
-                    >
-                    <input
-                      type="number"
-                      id="roi"
-                      step="0.01"
-                      class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                      >Tenure (Months)</label
-                    >
-                    <input
-                      type="number"
-                      id="tenure"
-                      class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                    >Start Date</label
-                  >
-                  <input
-                    type="date"
-                    id="start-date"
-                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                  />
-                </div>
-              </div>
-
               <div id="cc-fields" class="hidden space-y-4">
-                <div>
-                  <label
-                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                    >Current Balance (₹)</label
-                  >
-                  <input
-                    type="number"
-                    id="cc-balance"
-                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                  />
-                </div>
-                <div>
-                  <label
-                    class="text-[10px] font-bold text-slate-400 uppercase ml-1"
-                    >Interest Rate (Annual %)</label
-                  >
-                  <input
-                    type="number"
-                    id="cc-roi"
-                    value="42"
-                    class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
-                  />
-                </div>
+                <input
+                  type="number"
+                  id="cc-balance"
+                  placeholder="Current Balance (₹)"
+                  class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                />
+                <input
+                  type="number"
+                  id="cc-roi"
+                  value="42"
+                  placeholder="Annual ROI %"
+                  class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+                />
               </div>
 
               <button
                 type="submit"
-                class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-[0.98]"
+                class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:shadow-xl transition-all"
               >
                 Add to Portfolio
               </button>
@@ -230,39 +223,44 @@
 
         <div class="lg:col-span-8 space-y-8">
           <div
-            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"
+            class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm"
           >
-            <h3 class="text-lg font-bold mb-6 text-slate-800">
-              Balance Depletion Projection
+            <h3
+              class="text-lg font-bold mb-6 flex justify-between items-center"
+            >
+              Debt Depletion Curve
+              <span class="text-xs font-normal text-slate-400"
+                >Projected Balance vs. Time</span
+              >
             </h3>
-            <div class="h-72">
+            <div class="h-64">
               <canvas id="projectionChart"></canvas>
             </div>
           </div>
 
           <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+            class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden"
           >
-            <table class="w-full text-left border-collapse">
-              <thead class="bg-slate-50/80 border-b border-slate-100">
+            <table class="w-full text-left">
+              <thead class="bg-slate-50/50 border-b border-slate-100">
                 <tr>
                   <th
-                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                    class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest"
                   >
-                    Type & Name
+                    Description
                   </th>
                   <th
-                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right"
+                    class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right"
                   >
-                    Outstanding
+                    Balance
                   </th>
                   <th
-                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right"
+                    class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right"
                   >
-                    Min. Outflow
+                    Min Monthly
                   </th>
                   <th
-                    class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center no-print"
+                    class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center no-print"
                   >
                     Action
                   </th>
@@ -271,37 +269,13 @@
               <tbody id="debt-list" class="divide-y divide-slate-50"></tbody>
             </table>
           </div>
-
-          <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100">
-            <h4 class="text-amber-800 font-bold mb-2 flex items-center gap-2">
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              Financial Insight
-            </h4>
-            <p class="text-sm text-amber-700 leading-relaxed">
-              The <strong>Accelerated Date</strong> assumes you keep your total
-              monthly budget constant. Even after a loan is closed, that
-              specific EMI amount is redirected to pay off your credit card
-              principal faster, rather than being spent.
-            </p>
-          </div>
         </div>
       </div>
     </div>
 
     <script>
-      let debts = JSON.parse(localStorage.getItem("ultimate_debt_data")) || [];
+      let debts =
+        JSON.parse(localStorage.getItem("ultimate_debt_freedom")) || [];
       let chart = null;
 
       function setTab(type) {
@@ -311,13 +285,12 @@
           .getElementById("loan-fields")
           .classList.toggle("hidden", !isLoan);
         document.getElementById("cc-fields").classList.toggle("hidden", isLoan);
-
         document.getElementById("tab-loan").className = isLoan
-          ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all"
-          : "flex-1 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-all";
+          ? "flex-1 py-2 text-[10px] font-bold rounded-lg bg-white shadow-sm"
+          : "flex-1 py-2 text-[10px] font-bold text-slate-400";
         document.getElementById("tab-cc").className = !isLoan
-          ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all"
-          : "flex-1 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-all";
+          ? "flex-1 py-2 text-[10px] font-bold rounded-lg bg-white shadow-sm"
+          : "flex-1 py-2 text-[10px] font-bold text-slate-400";
       }
 
       function calculateLoanOutstanding(
@@ -346,7 +319,7 @@
         return (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
       }
 
-      function runProjection(totalMonthlyBudget) {
+      function runProjection(totalMonthlyBudget, yearlyBullet) {
         let activeDebts = debts
           .map((d) => {
             let bal =
@@ -373,33 +346,38 @@
           activeDebts.reduce((sum, d) => sum + d.currentBalance, 0) > 0 &&
           months < 360
         ) {
-          let remainingBudget = totalMonthlyBudget;
+          let currentMonthBudget = totalMonthlyBudget;
 
-          // 1. Accrue Interest
+          // Yearly Bullet Payment Logic
+          if (months > 0 && months % 12 === 0) {
+            currentMonthBudget += yearlyBullet;
+          }
+
+          // Apply Interest
           activeDebts.forEach(
             (d) => (d.currentBalance += d.currentBalance * d.monthlyRate),
           );
 
-          // 2. Pay Minimums First (1% for CC, Full EMI for Loan)
+          // Mandatory Minimums (Stay Current)
           activeDebts.forEach((d) => {
             let minPayment =
               d.type === "loan"
                 ? calculateEMI(d.principal, d.roi, d.tenure)
                 : d.currentBalance * 0.01;
-            let actualPayment = Math.min(
+            let pay = Math.min(
               d.currentBalance,
               minPayment,
-              remainingBudget,
+              currentMonthBudget,
             );
-            d.currentBalance -= actualPayment;
-            remainingBudget -= actualPayment;
+            d.currentBalance -= pay;
+            currentMonthBudget -= pay;
           });
 
-          // 3. Apply Extra Budget to highest ROI
-          if (remainingBudget > 0 && activeDebts.length > 0) {
+          // Extra Budget to High Interest
+          if (currentMonthBudget > 0 && activeDebts.length > 0) {
             activeDebts[0].currentBalance -= Math.min(
               activeDebts[0].currentBalance,
-              remainingBudget,
+              currentMonthBudget,
             );
           }
 
@@ -415,8 +393,8 @@
       function updateUI() {
         const list = document.getElementById("debt-list");
         list.innerHTML = "";
-        let totals = { outstanding: 0, monthly: 0 };
-        let maxStdMonths = 0;
+        let totals = { bal: 0, monthly: 0 };
+        let maxStd = 0;
 
         debts.forEach((d, i) => {
           let bal, monthly;
@@ -428,48 +406,45 @@
               d.startDate,
             );
             monthly = calculateEMI(d.principal, d.roi, d.tenure);
-            let start = new Date(d.startDate);
             let passed =
-              (new Date().getFullYear() - start.getFullYear()) * 12 +
-              (new Date().getMonth() - start.getMonth());
-            maxStdMonths = Math.max(maxStdMonths, d.tenure - passed);
+              (new Date().getFullYear() - new Date(d.startDate).getFullYear()) *
+                12 +
+              (new Date().getMonth() - new Date(d.startDate).getMonth());
+            maxStd = Math.max(maxStd, d.tenure - passed);
           } else {
             bal = parseFloat(d.balance);
-            monthly = bal * 0.01; // 1% Rule
+            monthly = bal * 0.01;
           }
-
-          totals.outstanding += bal;
+          totals.bal += bal;
           totals.monthly += monthly;
 
           list.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-5">
-                            <span class="text-[9px] font-black px-2 py-0.5 rounded ${d.type === "loan" ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"}">${d.type.toUpperCase()}</span>
-                            <div class="font-bold text-slate-800 mt-1">${d.name}</div>
-                        </td>
-                        <td class="p-5 text-right font-black text-slate-900">₹${Math.round(bal).toLocaleString("en-IN")}</td>
-                        <td class="p-5 text-right font-medium text-slate-500">₹${Math.round(monthly).toLocaleString("en-IN")}</td>
+                        <td class="p-5 font-bold text-slate-700">${d.name} <span class="text-[9px] text-slate-400 font-normal uppercase ml-2 tracking-tighter">${d.type}</span></td>
+                        <td class="p-5 text-right font-black">₹${Math.round(bal).toLocaleString("en-IN")}</td>
+                        <td class="p-5 text-right text-slate-500">₹${Math.round(monthly).toLocaleString("en-IN")}</td>
                         <td class="p-5 text-center no-print">
-                            <button onclick="remove(${i})" class="text-slate-300 hover:text-red-500 transition">Remove</button>
+                            <button onclick="remove(${i})" class="text-red-300 hover:text-red-500">✕</button>
                         </td>
                     </tr>`;
         });
 
-        const projection = runProjection(totals.monthly);
-        const today = new Date();
+        const yearlyExtra =
+          parseFloat(document.getElementById("yearly-prepay").value) || 0;
+        const projection = runProjection(totals.monthly, yearlyExtra);
 
         document.getElementById("total-outstanding").innerText =
-          "₹" + Math.round(totals.outstanding).toLocaleString("en-IN");
+          "₹" + Math.round(totals.bal).toLocaleString("en-IN");
         document.getElementById("total-outflow").innerText =
           "₹" + Math.round(totals.monthly).toLocaleString("en-IN");
 
         const stdDate = new Date(
-          today.getFullYear(),
-          today.getMonth() + maxStdMonths,
+          new Date().getFullYear(),
+          new Date().getMonth() + maxStd,
         );
         const accDate = new Date(
-          today.getFullYear(),
-          today.getMonth() + projection.months,
+          new Date().getFullYear(),
+          new Date().getMonth() + projection.months,
         );
 
         document.getElementById("std-close").innerText = debts.length
@@ -486,7 +461,7 @@
           : "-";
 
         renderChart(projection.history);
-        localStorage.setItem("ultimate_debt_data", JSON.stringify(debts));
+        localStorage.setItem("ultimate_debt_freedom", JSON.stringify(debts));
       }
 
       function renderChart(history) {
@@ -495,24 +470,17 @@
         chart = new Chart(ctx, {
           type: "line",
           data: {
-            labels: history.map((_, i) => `Month ${i}`),
+            labels: history.map((_, i) => `M${i}`),
             datasets: [
               {
                 data: history,
                 borderColor: "#10b981",
-                backgroundColor: (context) => {
-                  const chart = context.chart;
-                  const { ctx, chartArea } = chart;
-                  if (!chartArea) return null;
-                  const gradient = ctx.createLinearGradient(
-                    0,
-                    chartArea.top,
-                    0,
-                    chartArea.bottom,
-                  );
-                  gradient.addColorStop(0, "rgba(16, 185, 129, 0.2)");
-                  gradient.addColorStop(1, "rgba(16, 185, 129, 0)");
-                  return gradient;
+                borderWidth: 3,
+                backgroundColor: (c) => {
+                  const g = c.chart.ctx.createLinearGradient(0, 0, 0, 300);
+                  g.addColorStop(0, "rgba(16, 185, 129, 0.1)");
+                  g.addColorStop(1, "transparent");
+                  return g;
                 },
                 fill: true,
                 tension: 0.4,
@@ -524,7 +492,7 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              y: { beginAtZero: true, grid: { color: "#f1f5f9" } },
+              y: { grid: { color: "#f8fafc" } },
               x: { grid: { display: false } },
             },
           },
@@ -535,12 +503,11 @@
         const { jsPDF } = window.jspdf;
         const element = document.getElementById("report-content");
         const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
         const doc = new jsPDF("p", "mm", "a4");
-        const pdfWidth = doc.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        doc.save("Personal-Debt-Analysis.pdf");
+        const width = doc.internal.pageSize.getWidth();
+        const height = (canvas.height * width) / canvas.width;
+        doc.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, width, height);
+        doc.save("My-Debt-Freedom-Plan.pdf");
       }
 
       document.getElementById("debt-form").addEventListener("submit", (e) => {
